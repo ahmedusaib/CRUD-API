@@ -22,9 +22,19 @@ def API_Health():
     return {"status" : "ok"}
 
 @app.get("/tasks")
-def get_all_tasks():
-    """Retrieve the entire list of tasks stored in the database."""
-    return in_memoryDB
+def get_all_tasks(done: bool | None = None, search: str | None = None):
+    """Retrieve tasks with optional filters for completion status and title search."""
+    results = in_memoryDB
+    
+    # Filter by query parameter: ?done=true or ?done=false
+    if done is not None:
+        results = [task for task in results if task["done"] == done]
+        
+    # Search by query parameter: ?search=milk
+    if search:
+        results = [task for task in results if search.lower() in task["title"].lower()]
+        
+    return results
 
 @app.get("/tasks/{id}")
 def get_tasks(id:int):
@@ -100,6 +110,18 @@ def delete_task(id: int):
     # Unknown id → 404
     raise HTTPException(status_code=404, detail=f"Task {id} not found")
     
+@app.get("/stats")
+def get_api_stats():
+    """Compute live real-time statistics of all tasks in memory."""
+    total_tasks = len(in_memoryDB)
+    done_tasks = sum(1 for task in in_memoryDB if task["done"])
+    open_tasks = total_tasks - done_tasks
+    
+    return {
+        "total": total_tasks,
+        "done": done_tasks,
+        "open": open_tasks
+    }
 
     
 

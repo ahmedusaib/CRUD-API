@@ -72,6 +72,12 @@ Workspace Topography
 
 ---
 
+###  The Mortality Experiment
+
+When the FastAPI server is restarted, all newly created or updated tasks disappear, and the database resets to the original three tasks. This happens because the data is stored in the computer's volatile RAM memory as a standard Python list, which wipes clean the moment the script's execution process stops.
+
+---
+
 ###  Constraints & Next Iterations
 
 * **Volatile Architecture:** Runs strictly via a standard runtime dictionary loop. 
