@@ -51,4 +51,49 @@ def create_task(payload: dict = Body(...)):
     
     return new_task
 
+@app.put("/tasks/{id}")
+def update_tasks(id:int, payload: dict = Body(...)):
+    target_task = None
+    for task in in_memoryDB:
+        if task["id"] == id:
+            target_task = task
+            break
+        
+    if target_task is None:
+        raise HTTPException(status_code=404, detail=f"Task {id} Not Found")
+    
+    has_title = "title" in payload
+    has_done = "done" in payload
+    
+    if not has_title and not has_done:
+        raise HTTPException(status_code=400, detail="Must provide 'title' or 'done' to update")
+        
+    if has_title and (not isinstance(payload["title"], str) or not payload["title"].strip()):
+        raise HTTPException(status_code=400, detail="Title must be a non-empty string")
+        
+    if has_done and not isinstance(payload["done"], bool):
+        raise HTTPException(status_code=400, detail="Done must be a boolean (true/false)")
+
+   
+    if has_title:
+        target_task["title"] = payload["title"].strip()
+    if has_done:
+        target_task["done"] = payload["done"]
+        
+    return target_task
+
+
+@app.delete("/tasks/{id}", status_code=204)
+def delete_task(id: int):
+    
+    for index, task in enumerate(in_memoryDB):
+        if task["id"] == id:
+            in_memoryDB.pop(index)
+            return
+            
+    # Unknown id → 404
+    raise HTTPException(status_code=404, detail=f"Task {id} not found")
+    
+
+    
 
