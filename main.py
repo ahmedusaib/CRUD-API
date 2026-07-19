@@ -11,20 +11,24 @@ in_memoryDB = [
 
 @app.get("/")
 async def usaib():
+    """Return API metadata and planned endpoints."""
     return {"name" : "Fly Rank CRUD API",
             "version" : "1.0",
             "endpoints" : ["/tasks","/health"]}
 
 @app.get("/health")   
 def API_Health():
+    """Check the health status of the application server."""
     return {"status" : "ok"}
 
 @app.get("/tasks")
 def get_all_tasks():
+    """Retrieve the entire list of tasks stored in the database."""
     return in_memoryDB
 
 @app.get("/tasks/{id}")
 def get_tasks(id:int):
+    """Retrieve details for a single task using its unique integer ID."""
     for i in in_memoryDB:
         if i["id"] == id:
             return i
@@ -34,6 +38,7 @@ from fastapi import Body, HTTPException
 
 @app.post("/tasks", status_code=201)
 def create_task(payload: dict = Body(...)):
+    """Create a new task with a unique sequential ID and default 'done' status to False."""
     
     if "title" not in payload or not isinstance(payload["title"], str) or not payload["title"].strip():
         raise HTTPException(status_code=400, detail="Title is required and cannot be empty")
@@ -53,6 +58,7 @@ def create_task(payload: dict = Body(...)):
 
 @app.put("/tasks/{id}")
 def update_tasks(id:int, payload: dict = Body(...)):
+    """Modify the title and/or completion status of an existing task."""
     target_task = None
     for task in in_memoryDB:
         if task["id"] == id:
@@ -85,7 +91,7 @@ def update_tasks(id:int, payload: dict = Body(...)):
 
 @app.delete("/tasks/{id}", status_code=204)
 def delete_task(id: int):
-    
+    """Remove a task from the database permanently."""
     for index, task in enumerate(in_memoryDB):
         if task["id"] == id:
             in_memoryDB.pop(index)
