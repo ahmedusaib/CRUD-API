@@ -1,8 +1,8 @@
-# 🚀 Fly Rank CRUD API
+#  Fly Rank CRUD API
 
 A lean, high-performance task management backend engineered with **Python** and **FastAPI**. This system demonstrates a complete in-memory transactional workflow for handling Create, Read, Update, and Delete operations.
 
-> 💡 **Core Design Notice:** This project uses volatile, in-memory architecture. Storage resets to its base configuration during server cycles.
+>  **Core Design Notice:** This project uses volatile, in-memory architecture. Storage resets to its base configuration during server cycles.
 
 ---
 
